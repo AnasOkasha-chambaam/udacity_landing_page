@@ -88,3 +88,11 @@ document.addEventListener("DOMContentLoaded", startBuildingNavMenu);
 // Scroll to section on link click
 navbar__list.addEventListener("click", ulEventListener);
 // Set sections as active
+window.addEventListener('scroll', (e) => {
+  let dimensionsArr = {};
+  landingPageSections.forEach((sect,index)=>{
+    let sectDimension = getElmDimensions(sect);
+    dimensionsArr[+(Math.sqrt(Math.pow(sectDimension[0],2)+Math.pow(sectDimension[1],2)).toFixed(0))] = index;
+  })
+  console.log(dimensionsArr)
+})
