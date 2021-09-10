@@ -17,8 +17,8 @@
  * Define Global Variables
  *
  */
-let landingPageSections = document.querySelectorAll("section");
-
+let landingPageSections = document.querySelectorAll("section"),
+  hiddingNavBarTimeout = 1;
 /**
  * End Global Variables
  * Start Helper Functions
@@ -38,17 +38,11 @@ function getElmDimensions(element) {
   ];
 }
 
-function ulEventListener(e) {
-  let startTime = performance.now();
-  console.log(e.target.classList.contains("menu__link"));
-  if (e.target.classList.contains("menu__link")) {
-    e.preventDefault();
-    let sectToGoToId = e.target.getAttribute("href");
-    let ElmoffsetTop = document.querySelector(sectToGoToId).offsetTop;
-    scroll({ top: ElmoffsetTop, behavior: "smooth" });
-  }
-  let endTime = performance.now();
-  console.log((endTime - startTime) / 1000, " seconds");
+function getSectDistanceFromCenter(dimensionsArr) {
+  let sectDistance = Math.sqrt(
+    Math.pow(dimensionsArr[0], 2) + Math.pow(dimensionsArr[1], 2)
+  );
+  return sectDistance;
 }
 
 /**
@@ -57,25 +51,60 @@ function ulEventListener(e) {
  *
  */
 
-function startBuildingNavMenu(e) {
+// build the nav
+
+function startBuildingNavMenu() {
   let elementFragment = document.createDocumentFragment();
-  landingPageSections.forEach((sect) => {
+  landingPageSections.forEach((sect, index) => {
     let itsLi = document.createElement("li"),
       itsAnchor = document.createElement("a");
     itsAnchor.href = `#${sect.id}`;
     itsAnchor.innerText = sect.dataset.nav;
-    itsAnchor.classList.add("menu__link");
+    itsAnchor.className = `menu__link${
+      index === 0 ? " currently__active" : ""
+    }`;
     itsLi.appendChild(itsAnchor);
     elementFragment.appendChild(itsLi);
   });
   navbar__list.appendChild(elementFragment);
 }
 
-// build the nav
-
 // Add class 'active' to section when near top of viewport
 
+function setActiveSect() {
+  let dimensionsArr = {};
+  landingPageSections.forEach((sect, index) => {
+    let sectDimension = getElmDimensions(sect);
+    dimensionsArr[getSectDistanceFromCenter(sectDimension).toFixed(0)] = index;
+  });
+  let currentlyActiveSectionIndex =
+      dimensionsArr[Math.min(...Object.keys(dimensionsArr))],
+    currentlyActiveSection = landingPageSections[currentlyActiveSectionIndex];
+  if (currentlyActiveSection.classList.contains("currently__shown")) {
+    return;
+  }
+  document
+    .querySelector(".currently__shown")
+    .classList.remove("currently__shown");
+  document
+    .querySelector(".currently__active")
+    .classList.remove("currently__active");
+  document
+    .querySelectorAll(".menu__link")
+    [currentlyActiveSectionIndex].classList.add("currently__active");
+  currentlyActiveSection.classList.add("currently__shown");
+}
+
 // Scroll to anchor ID using scrollTO event
+
+function ulEventListener(e) {
+  if (e.target.classList.contains("menu__link")) {
+    e.preventDefault();
+    let sectToGoToId = e.target.getAttribute("href");
+    let ElmoffsetTop = document.querySelector(sectToGoToId).offsetTop;
+    scrollTo({ top: ElmoffsetTop, behavior: "smooth" });
+  }
+}
 
 /**
  * End Main Functions
@@ -88,11 +117,4 @@ document.addEventListener("DOMContentLoaded", startBuildingNavMenu);
 // Scroll to section on link click
 navbar__list.addEventListener("click", ulEventListener);
 // Set sections as active
-window.addEventListener('scroll', (e) => {
-  let dimensionsArr = {};
-  landingPageSections.forEach((sect,index)=>{
-    let sectDimension = getElmDimensions(sect);
-    dimensionsArr[+(Math.sqrt(Math.pow(sectDimension[0],2)+Math.pow(sectDimension[1],2)).toFixed(0))] = index;
-  })
-  console.log(dimensionsArr)
-})
+window.addEventListener("scroll", setActiveSect);
