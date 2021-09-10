@@ -2,12 +2,22 @@
 
 ## Table of Contents
 
-* [Instructions](#instructions)
+- [Title](#landing-page-project)
+- [Project Description](#project-description)
+- [Usage](#usage)
+- [Dependencies](#dependencies)
 
-## Instructions
+## Project Description
 
-The starter project has some HTML and CSS styling to display a static version of the Landing Page project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+- A landing page that has a header consisting of anchors added dynamically according to the number of document sections.
+- Each anchor refers to a section that scroll smoothly to it when it is clicked.
+- It uses some math to calculate which section is currently viewed and changes header style according to it.
+- The anchors are made dynamically, so you can add as many sections as you want.
 
-To get started, open `js/app.js` and start building out the app's functionality
+## Usage
 
-For specific, detailed instructions, look at the project instructions in the Udacity Classroom.
+It is used to build landing pages with sections and dynamicaly built header.
+
+## Dependencies
+
+There is no depedencies.
