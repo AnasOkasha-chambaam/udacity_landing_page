@@ -18,13 +18,18 @@
  *
  */
 let landingPageSections = document.querySelectorAll("section"),
-  hiddingNavBarTimeout = 1;
+  hiddingNavBarTimeout,
+  pageHeader = document.querySelector(".page__header");
 /**
  * End Global Variables
  * Start Helper Functions
  *
  */
-
+/**
+ * @description calculate the distance between the center of the element and the center of the window in x and y axes.
+ * @param {object} element - the element node
+ * @returns {object} - [element X axis, element Y axis]
+ */
 function getElmDimensions(element) {
   let yAxis = window.innerHeight / 2,
     xAxis = window.innerWidth / 2;
@@ -37,12 +42,46 @@ function getElmDimensions(element) {
       element.getBoundingClientRect().height / 2,
   ];
 }
-
+/**
+ * @description given an array of element x and y values, it calculates the distance
+ * @param {object} dimensionsArr - the element vector (array of element X and Y values)
+ * @returns {object} - the distance
+ */
 function getSectDistanceFromCenter(dimensionsArr) {
   let sectDistance = Math.sqrt(
     Math.pow(dimensionsArr[0], 2) + Math.pow(dimensionsArr[1], 2)
   );
   return sectDistance;
+}
+/**
+ * @description disable the pre-set time out and set another one to make the nav disappear when the user stops scrolling for two seconds
+ */
+function hideNavBar() {
+  if (!hiddingNavBarTimeout) {
+    hiddingNavBarTimeout = setTimeout(() => {
+      pageHeader.style.transform = "translateY(-100%)";
+    }, 2000);
+  }
+  clearTimeout(hiddingNavBarTimeout);
+  pageHeader.style.transform = "translateY(0)";
+  hiddingNavBarTimeout = setTimeout(() => {
+    pageHeader.style.transform = "translateY(-100%)";
+  }, 2000);
+}
+/**
+ * @description show and hide the "go up" button according to the progress of the scroll bar
+ */
+function toggleGoUpBtnStatus() {
+  if (window.scrollY > 249) {
+    return go__up.classList.add("shown");
+  }
+  go__up.classList.remove("shown");
+}
+/**
+ * @description scrolls to the top of the page
+ */
+function scrollToTop() {
+  scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /**
@@ -52,7 +91,9 @@ function getSectDistanceFromCenter(dimensionsArr) {
  */
 
 // build the nav
-
+/**
+ * @description build the nav bar according to the number of sections on the document
+ */
 function startBuildingNavMenu() {
   let elementFragment = document.createDocumentFragment();
   landingPageSections.forEach((sect, index) => {
@@ -70,7 +111,9 @@ function startBuildingNavMenu() {
 }
 
 // Add class 'active' to section when near top of viewport
-
+/**
+ * @description decide which section is shown and give it a class of "currently-shown" and add a class of "currently-active" to the anchor that leades to the section
+ */
 function setActiveSect() {
   let dimensionsArr = {};
   landingPageSections.forEach((sect, index) => {
@@ -96,7 +139,10 @@ function setActiveSect() {
 }
 
 // Scroll to anchor ID using scrollTO event
-
+/**
+ * @description scroll to the section by clicking an anchor
+ * @param {object} e - the event
+ */
 function ulEventListener(e) {
   if (e.target.classList.contains("menu__link")) {
     e.preventDefault();
@@ -118,3 +164,9 @@ document.addEventListener("DOMContentLoaded", startBuildingNavMenu);
 navbar__list.addEventListener("click", ulEventListener);
 // Set sections as active
 window.addEventListener("scroll", setActiveSect);
+// Hide Nav Bar
+window.addEventListener("scroll", hideNavBar);
+// show and hide go up button
+window.addEventListener("scroll", toggleGoUpBtnStatus);
+// scroll to the top
+go__up.addEventListener("click", scrollToTop);

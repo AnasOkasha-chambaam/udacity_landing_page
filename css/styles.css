@@ -85,6 +85,7 @@ section {
 
 .navbar__menu .menu__link:hover,
 .navbar__menu .currently__active {
+  /* *_ to make the hovered anchor and the anchor of the currently active section look different */
   background: #333;
   color: #fff;
   transition: ease 0.3s all;
@@ -97,6 +98,45 @@ section {
   top: 0;
   width: 100%;
   z-index: 5;
+  transition: transform 0.4s ease; /* *_ to make transform smooth*/
+}
+
+/* *_ go up button style */
+#go__up {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  border: none;
+  outline: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+  background-color: #333;
+  color: aliceblue;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(200%);
+  transition: transform 0.3s cubic-bezier(0.38, 0, 0, 0.84), opacity 0.3s ease;
+}
+
+#go__up.shown {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+/* *_ go up icon style */
+#go__up i {
+  filter: drop-shadow(0 0 aliceblue);
+  transform: translateY(0);
+  transition: filter 0.2s linear, transform 0.2s linear;
+}
+
+#go__up:hover i {
+  filter: drop-shadow(0 11px aliceblue);
+  transform: translateY(-20%) rotateY(180deg);
 }
 
 /* Footer Styles */
@@ -115,6 +155,20 @@ section {
 .landing__container {
   padding: 1em;
   text-align: left;
+}
+
+.landing__container > * {
+  /* *_ to animate active section content */
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.31, 0.18, 0.17, 0.99);
+}
+
+.currently__shown .landing__container > * {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
 }
 
 @media only screen and (min-width: 35em) {
